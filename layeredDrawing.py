@@ -34,11 +34,6 @@ def findMax(penPositions):
             if(xy[0]>=maxX):maxX = xy[0]
             if(xy[1]>=maxY):maxY = xy[1]
     return (int(maxX+minX),int(maxY+minX))
-def SharpnessStuff(image,layers,scale=10):
-	for x in range(layers):
-		image = ImageEnhance.Sharpness(image).enhance(scale)
-		image = ImageEnhance.Sharpness(image).enhance(-scale)
-	return image
 def drawStuff(im, arr,color):
     draw = ImageDraw.Draw(im)
     for index, item in enumerate(arr):
@@ -49,10 +44,10 @@ def drawStuff(im, arr,color):
                 draw.line((int(item[0]),int(item[1]),int(x1),int(y1)),color)
     im=smoothLine(im,color)
     return im
-def smoothLine(image,color):
+def smoothLine(im,color):
     draw = ImageDraw.Draw(im)
-    for y in range(1, image.height-1):
-        for x in range(1,image.width-1):
+    for y in range(1, im.height-1):
+        for x in range(1,im.width-1):
             b =[[str(im.getpixel((x, y)))==str(color),str(im.getpixel((x+1, y)))==str(color)],[str(im.getpixel((x, y+1)))==str(color),str(im.getpixel((x+1, y+1)))==str(color)]]
             if(b==[[1,0],[0,1]]):draw.point((x,y+1),color)
             if(b==[[0,1],[1,0]]):draw.point((x,y),color)
@@ -71,15 +66,17 @@ def draw():
     turtle.Screen().mainloop()
     penPositions.append("Break")
     penPositions.pop(0)
+def makeImage(name,color1=(0,255,255),color2=(255,0,0),padding = 50, bgcolor=(0,0,0)):
+    im = Image.new("RGB",findMax(setMins(penPositions,padding)),bgcolor)
+    im = drawStuff(im, penPositions,color1)
+    for x in range(250):
+    	im = ImageEnhance.Sharpness(im).enhance(500)
+    	im = ImageEnhance.Sharpness(im).enhance(-500)
+    im = drawStuff(im, penPositions,color2)
+    basewidth = im.width*4
+    wpercent = ((basewidth)/float(im.size[0]))
+    hsize = int((float(im.size[1])*float(wpercent)))
+    im.resize((basewidth,hsize)).show()
+    im.save(name)
 draw()
-im = Image.new("RGB",findMax(setMins(penPositions,50)),(0,0,0))
-im = drawStuff(im, penPositions,(0,255,255))
-for x in range(250):
-	im = ImageEnhance.Sharpness(im).enhance(500)
-	im = ImageEnhance.Sharpness(im).enhance(-500)
-im = drawStuff(im, penPositions,(255,0,0))
-basewidth = im.width*4
-wpercent = ((basewidth)/float(im.size[0]))
-hsize = int((float(im.size[1])*float(wpercent)))
-im = im.resize((basewidth,hsize))
-im.show()
+makeImage("temp.png")
