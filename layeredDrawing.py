@@ -42,10 +42,6 @@ def drawStuff(im, arr,color):
                 x1= arr[index+1][0]
                 y1= arr[index+1][1]
                 draw.line((int(item[0]),int(item[1]),int(x1),int(y1)),color)
-    im=smoothLine(im,color)
-    return im
-def smoothLine(im,color):
-    draw = ImageDraw.Draw(im)
     for y in range(1, im.height-1):
         for x in range(1,im.width-1):
             b =[[str(im.getpixel((x, y)))==str(color),str(im.getpixel((x+1, y)))==str(color)],[str(im.getpixel((x, y+1)))==str(color),str(im.getpixel((x+1, y+1)))==str(color)]]
